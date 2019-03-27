@@ -8,9 +8,13 @@
         <label id="#bb"> Select File
           <input type="file" name=file>
          </label> 
-      <td><input class="mybutton" type=submit value=Submit>
+      <td><input class="mybutton" type=submit value=Submit>   
     </tr>
+    
     </table>
+    {% if msg %}
+      <p><strong></strong> {{ msg }}
+    {% endif %}
   </form> 
   
   <hr/>
@@ -24,6 +28,10 @@
       <td><input class="mybutton" type="submit" value="Submit"  class="span2"></td>
     </tr>
     </table>
+    <!--{% if msg2 %}
+    <p><strong></strong> {{ msg2 }}
+    {% endif %}
+    -->
   </form>
 
 <div class="multi_upload_index">

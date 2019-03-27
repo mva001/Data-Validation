@@ -1,17 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
+
   <h2>SELECT COMPANY</h2>
   <font size="1"><h1>(Choose the related company/project, after that click on 'FILES TO UPLOAD' button.)</h1></font>
+
   <form class="button" method="POST">
+  {% if msg %}
+    <p><strong></strong> {{ msg }}
+  {% endif %}
     <input name="company">
     <input class= "mybutton" type="submit" value= "Load Company">
   </form>
-   <!--<a href="{{ url_for('index') }}"><font size="1" color="#004fab" face="verdana"> <h1>FILES TO UPLOAD</h1></a></font>
-   -->
-    </form>
-    <form class="button" action="/files" method="post">
-      <button class="mybutton" type="submit">Files to Upload</button>
-    </form>  
+  <form class="button" action="/files" method="post">
+    <button class="mybutton" type="submit">Files to Upload</button>
+  </form>  
+
     
   <div class="multi_upload_index">
   <h2>Instructions for the upload templates -  <b>CI's</b> and/or <b>Sites</b>:</h2>

@@ -10,9 +10,6 @@
 					<li><a href="{{url_for('uploaded_file', filename=file)}}">{{file}}</a></li>
 				{% endfor %}
 			</ul>
-	<form class = "button" action="/refresh/" method="post">
-  	<button class="mybutton" name="forwardBtn" type="submit">Refresh</button>
-	</form>
 	</div>
 	<div class="multi_files_upload"> 
 		<h2 class="text-muted">REPORT OVERVIEW</h2>
@@ -21,5 +18,4 @@
 			{{ text }}
 		</pre>
 	</div>
-
  {% endblock %}  

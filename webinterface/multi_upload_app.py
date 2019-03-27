@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory,send_file
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory,send_file,flash
 from werkzeug.utils import secure_filename
 import shutil
 
@@ -7,12 +7,8 @@ import process_data as prodata
 # Initialize the Flask application
 app = Flask(__name__)
 
-
-
-# This is the path to the upload directory
+# This is the path to the templates directory
 app.config['CMDB_FOLDER'] = 'CMDB_templates/'
-#app.config['DOWNLOAD_FOLDER'] = 'Report/'
-#app.config['ITSM_FOLDER'] = 'ITSM_sites/'
 #
 # These are the extension that we are accepting to be uploaded
 app.config['ALLOWED_EXTENSIONS'] = set(['xlsx','xls'])
@@ -25,23 +21,27 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def comp():
+	msg= None
 	if request.method == 'POST':
 		company = request.form['company']
 		projects = ['T-Mobile US','Orange BF', 'Telenor PK', 'Airtel Uganda', 'Bharti India']
-		if company in projects:
-			os.makedirs(company)
-			os.makedirs(company + '/ITSM_sites')
-			os.makedirs(company +'/Report')
-			os.makedirs(company + '/File_to_validate')
-			app.config['COMPANY_FOLDER'] = company
-			app.config['UPLOAD_FOLDER'] = company + '/File_to_validate/'
-			app.config['DOWNLOAD_FOLDER'] = company + '/Report/'
-			app.config['ITSM_FOLDER'] = company + '/ITSM_sites/'
-			text='Valid project'
+		if company not in projects:
+			msg='Please select a valid project'
 		else:
-			text='Select a valid project'
-		#os.rename(app.config['CMDB_FOLDER']+'CMDB_templates.zip', company+'CMDB_templates.zip')
-	return render_template('index_company.html')
+			if os.path.exists(company):
+				msg='Already in use or someone forgot to refresh the page!'
+			else:
+				os.makedirs(company)
+				os.makedirs(company + '/ITSM_sites')
+				os.makedirs(company +'/Report')
+				os.makedirs(company + '/File_to_validate')
+				app.config['COMPANY_FOLDER'] = company
+				app.config['UPLOAD_FOLDER'] = company + '/File_to_validate/'
+				app.config['DOWNLOAD_FOLDER'] = company + '/Report/'
+				app.config['ITSM_FOLDER'] = company + '/ITSM_sites/'
+				msg = 'Successful!'
+				#os.rename(app.config['CMDB_FOLDER']+'CMDB_templates.zip', company+'CMDB_templates.zip')
+	return render_template('index_company.html',msg=msg)
 
 
 
@@ -58,6 +58,7 @@ def file_downloads():
 
 @app.route('/files', methods=['GET','POST'])
 def index():
+	msg=None
 	if request.method == 'POST':
 		if 'file' not in request.files:
 			print('No file attached in request')
@@ -71,12 +72,15 @@ def index():
 			#shutil.rmtree('ITSM_sites')
 			#os.makedirs('ITSM_sites')
 			file.save(os.path.join(app.config['ITSM_FOLDER'], filename))
-	return render_template('multi_upload_index.html')
+		else:
+			msg='Please select a valid extension (.xls or .xlsx)'
+	return render_template('multi_upload_index.html',msg=msg)
 
 
 # Route that will process the file upload
 @app.route('/upload', methods=['POST'])
 def upload():
+	#msg2=None
 	# Get the name of the uploaded files
 	uploaded_files = request.files.getlist("file[]")
 	#filenames = []
@@ -90,7 +94,8 @@ def upload():
 			#shutil.rmtree('File_to_validate')
 			#os.makedirs('File_to_validate')
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			print('files were uploaded')
+		#else:
+			#msg2='Please select a valid extension (.xls or .xlsx)'
 		#shutil.rmtree('Report')
 		#os.makedirs('Report')
 
@@ -107,7 +112,7 @@ def upload():
 	# will basicaly show on the browser the uploaded file
 	# Load an html page with a link to each uploaded file
 
-	return render_template('multi_files_upload.html', filenames=filenames,text=content)
+	return render_template('multi_files_upload.html', filenames=filenames,text=content)#,msg2=msg2)
 
 
 
@@ -125,7 +130,7 @@ def refresh():
 		shutil.rmtree(app.config['COMPANY_FOLDER'])
 	#Moving forward code
 	#forward_message = "Moving Forward..."
-	return render_template('index_company.html')#, message=forward_message);
+	return render_template('refresh.html')#, message=forward_message);
 
 if __name__ == '__main__':
 	#port = int(os.environ.get("PORT", 5000))
