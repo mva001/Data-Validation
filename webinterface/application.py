@@ -133,9 +133,9 @@ def refresh():
 	#forward_message = "Moving Forward..."
 	return render_template('refresh.html')#, message=forward_message);
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
 	#port = int(os.environ.get("PORT", 5000))
 	#app.run(host='10.12.31.98', port=port)
 	#app.run(host='0.0.0.0', port=port)
 	#app.run(threaded=True,debug=True)
-	app.run(debug=True)
+#	app.run(debug=True)
